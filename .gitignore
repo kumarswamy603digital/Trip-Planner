@@ -1,0 +1,22 @@
+node_modules
+dist
+dist-ssr
+.vercel
+.netlify
+
+# local env — the LLM key never leaves your machine
+.env
+.env.local
+.env.*.local
+
+# browser verification captures (kept locally, not shipped)
+/shot-*.png
+/verify-*.png
+
+# editor / OS noise
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.log
+npm-debug.log*

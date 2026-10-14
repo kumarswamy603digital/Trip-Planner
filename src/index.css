@@ -1,0 +1,220 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    /* nothing on this app is allowed to push the page sideways on a phone (NFR-4) */
+    overflow-x: clip;
+  }
+
+  body {
+    @apply flex min-h-screen flex-col bg-sand-50 font-sans text-ink-900 antialiased;
+    background-image: radial-gradient(circle at 12% -10%, rgba(233, 216, 166, 0.55), transparent 45%),
+      radial-gradient(circle at 92% 0%, rgba(202, 103, 2, 0.09), transparent 40%);
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
+
+  :where(a, button, input, select, textarea):focus-visible {
+    @apply outline-none ring-2 ring-primary-600 ring-offset-2 ring-offset-sand-50 rounded-lg;
+  }
+
+  [lang='kn'] {
+    font-family: 'Noto Sans Kannada', 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  .container-app {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+  }
+
+  /*
+    Grid and flex children resolve to min-content by default, so one long unbreakable
+    line (a route written as "A → B → C") inflates the whole track and the page scrolls
+    sideways. Every track we lay out on purpose opts into shrinking instead.
+  */
+  .min-track > * {
+    min-width: 0;
+  }
+
+  #root {
+    @apply flex min-h-screen flex-col;
+  }
+
+  main {
+    @apply min-w-0 flex-1;
+  }
+
+  .card {
+    @apply rounded-2xl bg-white/90 shadow-card ring-1 ring-ink-900/5 backdrop-blur-sm;
+  }
+
+  .card-hover {
+    @apply transition duration-200 hover:-translate-y-0.5 hover:shadow-lift;
+  }
+
+  .btn {
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition duration-150 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-700 text-white hover:bg-primary-800 active:scale-[0.98] shadow-lift;
+  }
+
+  .btn-ghost {
+    @apply btn bg-white/70 text-ink-900 ring-1 ring-ink-900/10 hover:bg-white;
+  }
+
+  .btn-quiet {
+    @apply btn bg-transparent text-ink-700 hover:bg-ink-900/5;
+  }
+
+  /*
+    NFR-4 thumb room: anything a traveller has to hit on a phone gets a 44px target,
+    which the compact text-xs variants would otherwise fall short of.
+  */
+  .btn-touch {
+    @apply min-h-[2.75rem];
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ring-1 transition;
+  }
+
+  .chip-on {
+    @apply bg-primary-700 text-white ring-primary-800 shadow-lift;
+  }
+
+  .chip-off {
+    @apply bg-white/70 text-ink-700 ring-ink-900/10 hover:bg-white hover:ring-ink-900/20;
+  }
+
+  /* a chip you can tap is a control, so it gets control-sized thumb room */
+  .chip-touch {
+    @apply min-h-[2.75rem] px-4;
+  }
+
+  .label {
+    @apply text-xs font-bold uppercase tracking-[0.14em] text-ink-500;
+  }
+
+  .kannada {
+    @apply font-kannada leading-[1.6];
+  }
+
+  .phonetic {
+    @apply font-mono text-[0.82em] tracking-tight text-ochre-700;
+  }
+
+  .rule {
+    @apply h-px w-full bg-ink-900/10;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider;
+  }
+}
+
+/* the map tiles are greyscale-ish by nature; keep controls legible on sand */
+.leaflet-container {
+  @apply font-sans;
+  background: #f1e6cf;
+}
+
+.leaflet-popup-content-wrapper {
+  @apply rounded-xl shadow-lift;
+}
+
+.leaflet-popup-content {
+  @apply m-0 p-0 text-sm;
+  margin: 0;
+}
+
+.leaflet-bar a {
+  @apply !bg-white !text-ink-900;
+  /* Leaflet ships 30px zoom buttons — too small for a thumb on a phone (NFR-4) */
+  width: 2.5rem;
+  height: 2.5rem;
+  line-height: 2.5rem;
+}
+
+.ny-pin {
+  display: grid;
+  place-items: center;
+  border-radius: 9999px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 11px;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.28);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -320px 0;
+  }
+  100% {
+    background-position: 320px 0;
+  }
+}
+
+.skeleton {
+  @apply rounded-xl;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.04) 25%, rgba(0, 0, 0, 0.09) 50%, rgba(0, 0, 0, 0.04) 75%);
+  background-size: 640px 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+/* ---------- print: the trip becomes a real document (FR-8) ---------- */
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  body {
+    background: #fff !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-block {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    box-shadow: none !important;
+  }
+
+  .print-keep {
+    display: block !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  a[href]::after {
+    content: '';
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
